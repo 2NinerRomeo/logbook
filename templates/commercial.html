@@ -1,0 +1,49 @@
+{use_macro file="Dataface_Main_Template.html"}
+  {fill_slot name="main_section"}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.stack.js"></script>
+<script type="text/javascript">
+{literal}
+$(function () {
+   var totalHours = {/literal}{$totalHours}{literal};
+   var surpTotalHours = [];
+   var defTotalHours = [];
+   var reqTotalHours = 250;
+   var ticks = [[1,"Total"],[0,"PIC"]];
+   if (totalHours[0][0] > reqTotalHours){
+      surpTotalHours.push([totalHours[0][0]-reqTotalHours,0]);
+      defTotalHours.push([0,0]);
+   }else{
+      surpTotalHours.push([0,0]);
+      defTotalHours.push([reqTotalHours-totalHours[0][0],0]);
+   }
+   //alert(totalHours); //useless, shows array of "[object Object]"
+   //alert("Total Hours: " + totalHours[0][0]);
+   //alert("Surplus Hours: " + surpTotalHours[0][0]);
+   //alert("Deficit Hours: " + defTotalHours[0][0]);
+   //$.plot($("#totalHourChart"),[{data:totalHours, bars:{show:true, horizontal:true}}]);
+   $.plot($("#totalHourChart"),
+          [totalHours,surpTotalHours,defTotalHours],
+          {
+           series: {
+             stack: true,
+             bars: {show:true,
+                    horizontal:true,
+                    barWidth: 0.6
+             }
+           },
+           yaxis: {show: true,
+                   axisLabel: "Total Time",
+                   axisLabelUseCanvas: true,
+                   ticks: ticks
+           }
+          });
+});
+</script>
+{/literal}
+
+{$body}
+
+  {/fill_slot}
+{/use_macro}  

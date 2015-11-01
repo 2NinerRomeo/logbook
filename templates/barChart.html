@@ -1,0 +1,26 @@
+{use_macro file="Dataface_Main_Template.html"}
+  {fill_slot name="main_section"}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js"></script>
+<script type="text/javascript">
+{literal}
+$(function () {
+   var dataset1 = {/literal}{$dataset1}{literal};
+//   $.plot($("#typeBarChart"), dataset1, {series: { bar: {show:true}}});
+//   alert(dataset1);
+//   $.plot($("#typeBarChart"), dataset1, bars: {show:true});//no plot
+//   $.plot($("#typeBarChart"), dataset1, {series: {bar: {show:true}}});//shows an empty grid
+//   $.plot($("#typeBarChart"), dataset1, {series: {bars: {show:true}}});//also shows an empty grid
+//   $.plot($("#typeBarChart"), {data: dataset1, bars: {show:true}});//even emptier plot
+//   $.plot($("#typeBarChart"),  dataset1);//basic empty plot...WHY!!
+//   $.plot($("#typeBarChart"),  [dataset1]);//line!
+//   $.plot($("#typeBarChart"),  [{data:dataset1, lines:{show:true, fill:true}}]);//filled line!
+   $.plot($("#typeBarChart"),  [{data:dataset1, bars:{show:true, fill:true}}]);//filled line!
+});
+</script>
+{/literal}
+
+{$body}
+
+  {/fill_slot}
+{/use_macro}  

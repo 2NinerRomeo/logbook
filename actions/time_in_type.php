@@ -48,7 +48,7 @@ class actions_time_in_type
        
        //diagnostic dump to see what we've got
        //var_dump($dataset1);
-       var_dump(json_encode($dataset1));
+       //var_dump(json_encode($dataset1));
 
        $body .= "<td>";
        //reserve space for the pie chart

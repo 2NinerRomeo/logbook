@@ -43,7 +43,7 @@ class actions_time_by_year
 
        //diagnostic dump to see what we've got
        //var_dump($dataset1);
-       var_dump(json_encode($dataset1));
+       //var_dump(json_encode($dataset1));
 
        //reserve space for the pie chart
        $body .= "<div id=\"typeBarChart\"

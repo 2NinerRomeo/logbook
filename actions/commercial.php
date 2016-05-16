@@ -29,7 +29,8 @@ class actions_commercial
           $data[] = $row;
           $totalHours[] = array((float)$row['total_hours'],(int)0);
        }
-       mysql_free_result($result); //Frees the result after finished using it
+       //Frees the result after finished using it
+       mysql_free_result($result); 
        //// Create new RecordGrid with the data, works nicely
        //$grid = new Dataface_RecordGrid($data);  
        //$body .= $grid->toHTML();   // Get the HTML of the RecordGrid
@@ -38,16 +39,48 @@ class actions_commercial
     /////////////////////
     //Query for PIC hours
     /////////////////////
+    $result = mysql_query("SELECT SUM(flights.pic)
+                           AS total_pic
+                           FROM flights", 
+                           $this->app->db());
+    if(!$result)
+    {
+       $body .= "Query Error: PIC Hours";
+    }
+    else
+    {
+       while($row = mysql_fetch_assoc($result))  //Fetch all rows
+       {
+          //append data to array building the table
+          $data[] = $row;
+          $picHours[]   = array((float)$row['total_pic'],(int)0);
+       }
+       //Frees the result after finished using it
+       mysql_free_result($result); 
+       //// Create new RecordGrid with the data, works nicely
+       //$grid = new Dataface_RecordGrid($data);  
+       //$body .= $grid->toHTML();   // Get the HTML of the RecordGrid
+
+    }
 
     /////////////////
     //Finishing Stuff
     /////////////////
     //reserve space for the bar chart
-    $body .= "<div id=\"totalHourChart\"
-               style=\"width:600px;height:60px;\"><div>";
-    // Show the built-up content in a template derived from the main Template
+    $body .= "<br/>\n";
+    $body .= "<div id=\"totalHourChart\" style=\"width:600px; ";
+    $body .= "height:60px; \"></div>\n";
+    $body .= "<br/>\n";
+    $body .= "<div id=\"picChart\" style=\"width:600px; ";
+    $body .= "height:60px;\"></div>\n";
+    // Show the built-up content in a template derived from the main
+    // Template
+//    df_display(array('body' => $body,
+//                     'totalHours' => json_encode($totalHours)),
+//               'commercial.html');
     df_display(array('body' => $body,
-                     'totalHours' => json_encode($totalHours)),
+                     'totalHours' => json_encode($totalHours),
+                     'picHours' => json_encode($picHours)),
                      'commercial.html');
   }
 }

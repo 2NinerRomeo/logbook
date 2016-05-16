@@ -10,10 +10,11 @@ $(function () {
    var surpTotalHours = [];
    var defTotalHours = [];
    var reqTotalHours = 250;
-   var ticks = [[1,"Total"],[0,"PIC"]];
+   var ticks = [[1,"Total1"],[0,"Total0"]];
    if (totalHours[0][0] > reqTotalHours){
       surpTotalHours.push([totalHours[0][0]-reqTotalHours,0]);
       defTotalHours.push([0,0]);
+      totalHours[0][0] = reqTotalHours;
    }else{
       surpTotalHours.push([0,0]);
       defTotalHours.push([reqTotalHours-totalHours[0][0],0]);
@@ -35,6 +36,35 @@ $(function () {
            },
            yaxis: {show: true,
                    axisLabel: "Total Time",
+                   axisLabelUseCanvas: true,
+                   ticks: ticks
+           }
+          });
+   var picHours = {/literal}{$picHours}{literal};
+   var surpPicHours = [];
+   var defPicHours = [];
+   var reqPicHours = 100;
+   var ticks = [[1,"PIC1"],[0,"PIC0"]];
+   if (picHours[0][0] > reqPicHours){
+      surpPicHours.push([picHours[0][0]-reqPicHours,0]);
+      defPicHours.push([0,0]);
+      picHours[0][0] = reqPicHours;
+   }else{
+      surpPicHours.push([0,0]);
+      defPicHours.push([reqPicHours-totalHours[0][0],0]);
+   }
+   $.plot($("#picChart"),
+          [picHours,surpPicHours,defPicHours],
+          {
+           series: {
+             stack: true,
+             bars: {show:true,
+                    horizontal:true,
+                    barWidth: 0.6
+             }
+           },
+           yaxis: {show: true,
+                   axisLabel: "Pic Time",
                    axisLabelUseCanvas: true,
                    ticks: ticks
            }

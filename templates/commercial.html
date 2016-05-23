@@ -6,6 +6,7 @@
 <script type="text/javascript">
 {literal}
 $(function () {
+   //First a PIC Chart
    var totalHours = {/literal}{$totalHours}{literal};
    var surpTotalHours = [];
    var defTotalHours = [];
@@ -40,6 +41,7 @@ $(function () {
                    ticks: ticks
            }
           });
+   //Now a PIC Chart
    var picHours = {/literal}{$picHours}{literal};
    var surpPicHours = [];
    var defPicHours = [];
@@ -61,6 +63,50 @@ $(function () {
              bars: {show:true,
                     horizontal:true,
                     barWidth: 0.6
+             }
+           },
+           yaxis: {show: true,
+                   axisLabel: "Pic Time",
+                   axisLabelUseCanvas: true,
+                   ticks: ticks
+           }
+          });
+   //now try to combine them into one chart
+   //var combinedHours
+   var combinedHoursBarData = [{
+      data : [
+         [ totalHours[0][0] , 0 ],
+         [ picHours[0][0] , -1 ]
+      ],
+      label: "required complete"
+   }, {
+      data: [
+         [ surpTotalHours[0][0] , 0 ],
+         [ surpPicHours[0][0] , -1 ]
+      ],
+      label: "surplus"
+   }, {
+      data: [
+         [ defTotalHours[0][0] , 0 ],
+         [ defPicHours[0][0] , -1 ]
+      ],
+      label: "deficient"
+   }];
+
+//   var ticks = [[0,"PIC"],
+//                [1,"Total"]];
+   var ticks = [[0,"Total"],
+                [-1,"PIC"]];
+
+   $.plot($("#combinedChart"),
+          combinedHoursBarData,
+          {
+           series: {
+             stack: true,
+             bars: {show:true,
+                    horizontal:true,
+                    barWidth: 0.6,
+                    align: "center"
              }
            },
            yaxis: {show: true,

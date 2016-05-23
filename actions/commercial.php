@@ -73,6 +73,9 @@ class actions_commercial
     $body .= "<br/>\n";
     $body .= "<div id=\"picChart\" style=\"width:600px; ";
     $body .= "height:60px;\"></div>\n";
+    $body .= "<br/>\n";
+    $body .= "<div id=\"combinedChart\" style=\"width:600px; ";
+    $body .= "height:150px;\"></div>\n";
     // Show the built-up content in a template derived from the main
     // Template
 //    df_display(array('body' => $body,

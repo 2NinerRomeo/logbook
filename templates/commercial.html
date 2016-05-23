@@ -10,7 +10,7 @@ $(function () {
    var surpTotalHours = [];
    var defTotalHours = [];
    var reqTotalHours = 250;
-   var ticks = [[1,"Total1"],[0,"Total0"]];
+   var ticks = [[1,"Total1"],[0,"Total"]];
    if (totalHours[0][0] > reqTotalHours){
       surpTotalHours.push([totalHours[0][0]-reqTotalHours,0]);
       defTotalHours.push([0,0]);
@@ -44,7 +44,7 @@ $(function () {
    var surpPicHours = [];
    var defPicHours = [];
    var reqPicHours = 100;
-   var ticks = [[1,"PIC1"],[0,"PIC0"]];
+   var ticks = [[1,"PIC1"],[0,"PIC"]];
    if (picHours[0][0] > reqPicHours){
       surpPicHours.push([picHours[0][0]-reqPicHours,0]);
       defPicHours.push([0,0]);

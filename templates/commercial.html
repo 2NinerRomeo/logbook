@@ -6,89 +6,51 @@
 <script type="text/javascript">
 {literal}
 $(function () {
-   //First a PIC Chart
+   //First, Total Hours Data
    var totalHours = {/literal}{$totalHours}{literal};
-   var surpTotalHours = [];
-   var defTotalHours = [];
+   var surpTotalHours = 0;
+   var defTotalHours = 0;
    var reqTotalHours = 250;
-   var ticks = [[1,"Total1"],[0,"Total"]];
-   if (totalHours[0][0] > reqTotalHours){
-      surpTotalHours.push([totalHours[0][0]-reqTotalHours,0]);
-      defTotalHours.push([0,0]);
-      totalHours[0][0] = reqTotalHours;
+   if (totalHours > reqTotalHours){
+      surpTotalHours = totalHours-reqTotalHours;
+      defTotalHours = 0;
+      totalHours = reqTotalHours;
    }else{
-      surpTotalHours.push([0,0]);
-      defTotalHours.push([reqTotalHours-totalHours[0][0],0]);
+      surpTotalHours = 0;
+      defTotalHours = reqTotalHours-totalHours;
    }
-   //alert(totalHours); //useless, shows array of "[object Object]"
-   //alert("Total Hours: " + totalHours[0][0]);
-   //alert("Surplus Hours: " + surpTotalHours[0][0]);
-   //alert("Deficit Hours: " + defTotalHours[0][0]);
-   //$.plot($("#totalHourChart"),[{data:totalHours, bars:{show:true, horizontal:true}}]);
-   $.plot($("#totalHourChart"),
-          [totalHours,surpTotalHours,defTotalHours],
-          {
-           series: {
-             stack: true,
-             bars: {show:true,
-                    horizontal:true,
-                    barWidth: 0.6
-             }
-           },
-           yaxis: {show: true,
-                   axisLabel: "Total Time",
-                   axisLabelUseCanvas: true,
-                   ticks: ticks
-           }
-          });
-   //Now a PIC Chart
+
+   //Now a PIC Data
    var picHours = {/literal}{$picHours}{literal};
-   var surpPicHours = [];
-   var defPicHours = [];
+   var surpPicHours = 0;
+   var defPicHours = 0;
    var reqPicHours = 100;
-   var ticks = [[1,"PIC1"],[0,"PIC"]];
-   if (picHours[0][0] > reqPicHours){
-      surpPicHours.push([picHours[0][0]-reqPicHours,0]);
-      defPicHours.push([0,0]);
-      picHours[0][0] = reqPicHours;
+   if (picHours > reqPicHours){
+      surpPicHours = picHours-reqPicHours;
+      defPicHours = 0;
+      picHours = reqPicHours;
    }else{
-      surpPicHours.push([0,0]);
-      defPicHours.push([reqPicHours-totalHours[0][0],0]);
+      surpPicHours = 0;
+      defPicHours = reqPicHours-picHours;
    }
-   $.plot($("#picChart"),
-          [picHours,surpPicHours,defPicHours],
-          {
-           series: {
-             stack: true,
-             bars: {show:true,
-                    horizontal:true,
-                    barWidth: 0.6
-             }
-           },
-           yaxis: {show: true,
-                   axisLabel: "Pic Time",
-                   axisLabelUseCanvas: true,
-                   ticks: ticks
-           }
-          });
-   //now try to combine them into one chart
-   //var combinedHours
+
+   //now combine them into one chart
    var combinedHoursBarData = [{
       data : [
-         [ totalHours[0][0] , 0 ],
-         [ picHours[0][0] , -1 ]
+         [ totalHours , 0 ],
+         [ picHours , -1 ]
       ],
       label: "required complete"
    }, {
       data: [
-         [ surpTotalHours[0][0] , 0 ],
-         [ surpPicHours[0][0] , -1 ]
+         [ surpTotalHours , 0 ],
+         [ surpPicHours , -1 ]
       ],
       label: "surplus"
    }, {
       data: [
-         [ defTotalHours[0][0] , 0 ],
-         [ defPicHours[0][0] , -1 ]
+         [ defTotalHours , 0 ],
+         [ defPicHours , -1 ]
       ],
       label: "deficient"
    }];

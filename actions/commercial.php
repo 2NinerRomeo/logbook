@@ -27,7 +27,8 @@ class actions_commercial
        {
           //append data to array building the table
           $data[] = $row;
-          $totalHours[] = array((float)$row['total_hours'],(int)0);
+          //$totalHours[] = array((float)$row['total_hours'],(int)0);
+          $totalHours = (float)$row['total_hours'];
        }
        //Frees the result after finished using it
        mysql_free_result($result); 
@@ -53,7 +54,8 @@ class actions_commercial
        {
           //append data to array building the table
           $data[] = $row;
-          $picHours[]   = array((float)$row['total_pic'],(int)0);
+          //$picHours[]   = array((float)$row['total_pic'],(int)0);
+	  $picHours = (float)$row['total_pic'];
        }
        //Frees the result after finished using it
        mysql_free_result($result); 
@@ -68,22 +70,13 @@ class actions_commercial
     /////////////////
     //reserve space for the bar chart
     $body .= "<br/>\n";
-    $body .= "<div id=\"totalHourChart\" style=\"width:600px; ";
-    $body .= "height:60px; \"></div>\n";
-    $body .= "<br/>\n";
-    $body .= "<div id=\"picChart\" style=\"width:600px; ";
-    $body .= "height:60px;\"></div>\n";
-    $body .= "<br/>\n";
     $body .= "<div id=\"combinedChart\" style=\"width:600px; ";
     $body .= "height:150px;\"></div>\n";
     // Show the built-up content in a template derived from the main
     // Template
-//    df_display(array('body' => $body,
-//                     'totalHours' => json_encode($totalHours)),
-//               'commercial.html');
     df_display(array('body' => $body,
-                     'totalHours' => json_encode($totalHours),
-                     'picHours' => json_encode($picHours)),
+		     'totalHours' => $totalHours,
+                     'picHours' => $picHours),
                      'commercial.html');
   }
 }

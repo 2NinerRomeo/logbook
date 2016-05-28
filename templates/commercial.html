@@ -20,7 +20,14 @@ var hrType = Object.freeze({
    "AIRPLANES":2,
    "PIC":3,
    "PICCC":4,
-   "NUMBER":5 });
+   "CDUAL":5,
+   "CDUALINST":6,
+   "CDUALINSTSE":7,
+   "CDUALCPLX":8,
+   "CDUALTEST":9,
+   "SOLO":10,
+   "SOLONIGHT":11,
+   "NUMBER":12 });
 
 function createArray(length) {
     var arr = new Array(length || 0),
@@ -58,6 +65,14 @@ $(function () {
    hourBarData[hrType.PIC][hrBar.LOGGED] = 
       {/literal}{$picHours}{literal};
    hourBarData[hrType.PICCC][hrBar.LOGGED] = 0.0;
+   hourBarData[hrType.CDUAL][hrBar.LOGGED] = 0.0;
+   hourBarData[hrType.CDUALINST][hrBar.LOGGED] = 0.0;
+   hourBarData[hrType.CDUALINSTSE][hrBar.LOGGED] = 0.0;
+   hourBarData[hrType.CDUALCPLX][hrBar.LOGGED] = 0.0;
+   hourBarData[hrType.CDUALTEST][hrBar.LOGGED] = 0.0;
+   hourBarData[hrType.SOLO][hrBar.LOGGED] = 0.0;
+   hourBarData[hrType.SOLONIGHT][hrBar.LOGGED] = 0.0;
+
 
    //populate required hours
    hourBarData[hrType.TOTAL][hrBar.REQUIRED] = 250.0;
@@ -65,6 +80,13 @@ $(function () {
    hourBarData[hrType.AIRPLANES][hrBar.REQUIRED] = 50.0;
    hourBarData[hrType.PIC][hrBar.REQUIRED] = 100.0;
    hourBarData[hrType.PICCC][hrBar.REQUIRED] = 50.0;
+   hourBarData[hrType.CDUAL][hrBar.REQUIRED] = 20.0;
+   hourBarData[hrType.CDUALINST][hrBar.REQUIRED] = 10.0;
+   hourBarData[hrType.CDUALINSTSE][hrBar.REQUIRED] = 5.0;
+   hourBarData[hrType.CDUALCPLX][hrBar.REQUIRED] = 10.0;
+   hourBarData[hrType.CDUALTEST][hrBar.REQUIRED] = 3.0;
+   hourBarData[hrType.SOLO][hrBar.REQUIRED] = 10.0;
+   hourBarData[hrType.SOLONIGHT][hrBar.REQUIRED] = 5.0;
 
    //calculate surpluses and deficits
    for(index = 0; index < hrType.NUMBER; ++index)
@@ -74,32 +96,75 @@ $(function () {
 
    //diagnostic output
    alert(hourBarData);
+   alert("PIC:  " + hourBarData[hrType.PIC]);
+   alert("PIC CC:  " + hourBarData[hrType.PICCC]);
+   alert("Dual:  " + hourBarData[hrType.CDUAL]);
    
    //now combine them into one chart
    var combinedHoursBarData = [{
       data : [
          [ hourBarData[hrType.TOTAL][hrBar.FULFILLED] , 0 ],
-         [ hourBarData[hrType.PIC][hrBar.FULFILLED] , -1 ]
+         [ hourBarData[hrType.POWERED][hrBar.FULFILLED], -1],
+	 [ hourBarData[hrType.AIRPLANES][hrBar.FULFILLED], -2],
+         [ hourBarData[hrType.PIC][hrBar.FULFILLED], -3],
+         [ hourBarData[hrType.PICCC][hrBar.FULFILLED], -4],
+         [ hourBarData[hrType.CDUAL][hrBar.FULFILLED], -5],
+         [ hourBarData[hrType.CDUALINST][hrBar.FULFILLED], -6],
+         [ hourBarData[hrType.CDUALINSTSE][hrBar.FULFILLED], -7],
+         [ hourBarData[hrType.CDUALCPLX][hrBar.FULFILLED], -8],
+         [ hourBarData[hrType.CDUALTEST][hrBar.FULFILLED], -9],
+         [ hourBarData[hrType.SOLO][hrBar.FULFILLED] -10],
+         [ hourBarData[hrType.SOLONIGHT][hrBar.FULFILLED], -11]
       ],
       label: "complete req"
    }, {
       data: [
-         [ hourBarData[hrType.TOTAL][hrBar.SURPLUS] , 0 ],
-         [ hourBarData[hrType.PIC][hrBar.SURPLUS] , -1 ]
+         [ hourBarData[hrType.TOTAL][hrBar.SURPLUS], 0 ],
+         [ hourBarData[hrType.POWERED][hrBar.SURPLUS], -1],
+	 [ hourBarData[hrType.AIRPLANES][hrBar.SURPLUS], -2],
+         [ hourBarData[hrType.PIC][hrBar.SURPLUS], -3 ],
+         [ hourBarData[hrType.PICCC][hrBar.SURPLUS], -4],
+         [ hourBarData[hrType.CDUAL][hrBar.SURPLUS], -5],
+         [ hourBarData[hrType.CDUALINST][hrBar.SURPLUS], -6],
+         [ hourBarData[hrType.CDUALINSTSE][hrBar.SURPLUS], -7],
+         [ hourBarData[hrType.CDUALCPLX][hrBar.SURPLUS], -8],
+         [ hourBarData[hrType.CDUALTEST][hrBar.SURPLUS], -9],
+         [ hourBarData[hrType.SOLO][hrBar.SURPLUS] -10],
+         [ hourBarData[hrType.SOLONIGHT][hrBar.SURPLUS], -11]
       ],
       label: "surplus"
    }, {
       data: [
          [ hourBarData[hrType.TOTAL][hrBar.DEFICIENT] , 0 ],
-         [ hourBarData[hrType.PIC][hrBar.DEFICIENT] , -1 ]
+         [ hourBarData[hrType.POWERED][hrBar.DEFICIENT] , -1],
+	 [ hourBarData[hrType.AIRPLANES][hrBar.DEFICIENT], -2],
+         [ hourBarData[hrType.PIC][hrBar.DEFICIENT], -3 ],
+         [ hourBarData[hrType.PICCC][hrBar.DEFICIENT], -4],
+         [ hourBarData[hrType.CDUAL][hrBar.DEFICIENT], -5],
+         [ hourBarData[hrType.CDUALINST][hrBar.DEFICIENT], -6],
+         [ hourBarData[hrType.CDUALINSTSE][hrBar.DEFICIENT], -7],
+         [ hourBarData[hrType.CDUALCPLX][hrBar.DEFICIENT], -8],
+         [ hourBarData[hrType.CDUALTEST][hrBar.DEFICIENT], -9],
+         [ hourBarData[hrType.SOLO][hrBar.DEFICIENT], -10],
+         [ hourBarData[hrType.SOLONIGHT][hrBar.DEFICIENT], -11]
       ],
       label: "deficient"
 }];
 
-//   var ticks = [[0,"PIC"],
-//                [1,"Total"]];
-   var ticks = [[0,"Total"],
-                [-1,"PIC"]];
+   var ticks = [
+      [0,"Total"],
+      [-1,"Powered"],
+      [-2,"Airplanes"],
+      [-3,"PIC"],
+      [-4,"PIC CC"],
+      [-5,"Comm Dual"],
+      [-6,"Dual SIFR"],
+      [-7,"Dual SIFR SE"],
+      [-8,"Dual Cplx"],
+      [-9,"Dual Exam"],
+      [-10,"Solo"],
+      [-11,"Solo Night"]
+   ];
 
    $.plot($("#combinedChart"),
           combinedHoursBarData,

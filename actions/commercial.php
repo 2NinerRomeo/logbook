@@ -70,8 +70,8 @@ class actions_commercial
     /////////////////
     //reserve space for the bar chart
     $body .= "<br/>\n";
-    $body .= "<div id=\"combinedChart\" style=\"width:600px; ";
-    $body .= "height:150px;\"></div>\n";
+    $body .= "<div id=\"combinedChart\" style=\"width:800px; ";
+    $body .= "height:1050px;\"></div>\n";
     // Show the built-up content in a template derived from the main
     // Template
     df_display(array('body' => $body,

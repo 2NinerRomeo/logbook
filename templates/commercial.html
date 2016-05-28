@@ -5,55 +5,96 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.stack.js"></script>
 <script type="text/javascript">
 {literal}
+
+var hrBar = Object.freeze({
+   "LOGGED":0,
+   "REQUIRED":1,
+   "FULFILLED":2,
+   "SURPLUS":3,
+   "DEFICIENT":4,
+   "NUMBER":5 });
+
+var hrType = Object.freeze({
+   "TOTAL":0,
+   "POWERED":1,
+   "AIRPLANES":2,
+   "PIC":3,
+   "PICCC":4,
+   "NUMBER":5 });
+
+function createArray(length) {
+    var arr = new Array(length || 0),
+        i = length;
+
+    if (arguments.length > 1) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = createArray.apply(this, args);
+    }
+
+    return arr;
+}
+
+function surplusOrDeficit(hours){
+   if(hours[hrBar.LOGGED] > hours[hrBar.REQUIRED]){
+      hours[hrBar.SURPLUS] = hours[hrBar.LOGGED]-hours[hrBar.REQUIRED];
+      hours[hrBar.DEFICIENT] = 0;
+      hours[hrBar.FULFILLED] = hours[hrBar.REQUIRED];
+   }else{
+      hours[hrBar.SURPLUS] = 0;
+      hours[hrBar.DEFICIENT] = hours[hrBar.REQUIRED]-hours[hrBar.LOGGED];
+      hours[hrBar.FULFILLED] = hours[hrBar.LOGGED];
+   }
+}
+
 $(function () {
-   //First, Total Hours Data
-   var totalHours = {/literal}{$totalHours}{literal};
-   var surpTotalHours = 0;
-   var defTotalHours = 0;
-   var reqTotalHours = 250;
-   if (totalHours > reqTotalHours){
-      surpTotalHours = totalHours-reqTotalHours;
-      defTotalHours = 0;
-      totalHours = reqTotalHours;
-   }else{
-      surpTotalHours = 0;
-      defTotalHours = reqTotalHours-totalHours;
+   //Create an array
+   hourBarData = createArray(hrType.NUMBER, hrBar.NUMBER);
+   
+   //populate logged hours
+   hourBarData[hrType.TOTAL][hrBar.LOGGED] = 
+      {/literal}{$totalHours}{literal};
+   hourBarData[hrType.POWERED][hrBar.LOGGED] = 0.0;
+   hourBarData[hrType.AIRPLANES][hrBar.LOGGED] = 0.0;
+   hourBarData[hrType.PIC][hrBar.LOGGED] = 
+      {/literal}{$picHours}{literal};
+   hourBarData[hrType.PICCC][hrBar.LOGGED] = 0.0;
+
+   //populate required hours
+   hourBarData[hrType.TOTAL][hrBar.REQUIRED] = 250.0;
+   hourBarData[hrType.POWERED][hrBar.REQUIRED] = 100.0;
+   hourBarData[hrType.AIRPLANES][hrBar.REQUIRED] = 50.0;
+   hourBarData[hrType.PIC][hrBar.REQUIRED] = 100.0;
+   hourBarData[hrType.PICCC][hrBar.REQUIRED] = 50.0;
+
+   //calculate surpluses and deficits
+   for(index = 0; index < hrType.NUMBER; ++index)
+   {
+      surplusOrDeficit(hourBarData[index]);   
    }
 
-   //Now a PIC Data
-   var picHours = {/literal}{$picHours}{literal};
-   var surpPicHours = 0;
-   var defPicHours = 0;
-   var reqPicHours = 100;
-   if (picHours > reqPicHours){
-      surpPicHours = picHours-reqPicHours;
-      defPicHours = 0;
-      picHours = reqPicHours;
-   }else{
-      surpPicHours = 0;
-      defPicHours = reqPicHours-picHours;
-   }
-
+   //diagnostic output
+   alert(hourBarData);
+   
    //now combine them into one chart
    var combinedHoursBarData = [{
       data : [
-         [ totalHours , 0 ],
-         [ picHours , -1 ]
+         [ hourBarData[hrType.TOTAL][hrBar.FULFILLED] , 0 ],
+         [ hourBarData[hrType.PIC][hrBar.FULFILLED] , -1 ]
       ],
-      label: "required complete"
+      label: "complete req"
    }, {
       data: [
-         [ surpTotalHours , 0 ],
-         [ surpPicHours , -1 ]
+         [ hourBarData[hrType.TOTAL][hrBar.SURPLUS] , 0 ],
+         [ hourBarData[hrType.PIC][hrBar.SURPLUS] , -1 ]
       ],
       label: "surplus"
    }, {
       data: [
-         [ defTotalHours , 0 ],
-         [ defPicHours , -1 ]
+         [ hourBarData[hrType.TOTAL][hrBar.DEFICIENT] , 0 ],
+         [ hourBarData[hrType.PIC][hrBar.DEFICIENT] , -1 ]
       ],
       label: "deficient"
-   }];
+}];
 
 //   var ticks = [[0,"PIC"],
 //                [1,"Total"]];

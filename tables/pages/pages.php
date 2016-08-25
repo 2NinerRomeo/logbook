@@ -49,6 +49,30 @@ function block__after_view_tab_content()
    // Queries for data on THIS PAGE //
    ///////////////////////////////////
 
+   $target_row = array(
+     "pages" => "0",
+     "flight_count" => "0",
+     "landings" => "0",
+     "tw_landings" => "0",
+     "tw_hours" => "0",
+     "cross_country" => "0",
+     "day" => "0",
+     "night" => "0",
+     "sim_imc" => "0",
+     "act_imc" => "0",
+     "dual_hours" => "0",
+     "pic" => "0",
+     "total_hours" => "0"
+   );
+
+//   echo "Target row:<br/>\n";
+//   var_dump($target_row);
+//   echo "<br>\n";
+
+   ///////////////////////////////////
+   // Queries for data on THIS PAGE //
+   ///////////////////////////////////
+
    //Total hours (no specific aircraft/flight requirements)
    $pageRes = mysql_query("SELECT COUNT(id) AS flight_count,
                          SUM(flights.landings) AS landings,
@@ -67,6 +91,7 @@ function block__after_view_tab_content()
    }
 
    $row = mysql_fetch_assoc($pageRes);
+
    mysql_free_result($pageRes);
 
 
@@ -84,19 +109,63 @@ function block__after_view_tab_content()
    {
       echo "Errormessage: ";
       echo mysql_error();
-      //echo "Nothing found in first Taildragger SQL query...";
+      echo "Nothing found in first Taildragger SQL query...";
    }
 
-//   $row = mysql_fetch_assoc($pageRes);
+//   $tdrow = mysql_fetch_assoc($pageRes);
 //   mysql_free_result($pageRes);
+
+   //Cross Country hours
+   $pageRes = mysql_query("SELECT SUM(flights.day + flights.night) AS cross_country
+                         FROM flights 
+                         WHERE flights.pageId = ".$pageRecord->val('id').
+			 " AND flights.crossCountry" , $app->db());
+
+   $ccrow = mysql_fetch_assoc($pageRes);
+   mysql_free_result($pageRes);
+
+   //Dual hours
+   $pageRes = mysql_query("SELECT SUM(flights.day + flights.night) AS dual_hours
+                           FROM flights
+                           WHERE flights.pageId = " . $pageRecord->val('id') .
+                           " AND flights.instructorId" , $app->db());
+
+   $dualrow = mysql_fetch_assoc($pageRes);
+   mysql_free_result($pageRes);
+
+   if(!$pageRes)
+   {
+      echo "Errormessage: <br>\n";
+      echo mysql_error() ."<br>\n";
+      echo "Nothing found in Dual query...<br>\n";
+   }
+   
 
 //   echo "Flights on page: ";
 //   echo $row['numflights']."<br>";
 //   var_dump($row);
-   echo "<br>";
+//   echo "<br>";
 
-   $row = array("pages"=>"This page") + $row;
-   $data[] = $row;
+   $target_row = array_merge(
+     $target_row,
+     $row,
+     array("pages"=>"This Page"),
+     $ccrow,$dualrow);
+
+//   var_dump($target_row);
+//   echo "<br>\n";
+   $data[] = $target_row;
+
+
+   ///////////////////////////////////
+   // Clear out Data in $target_row //
+   ///////////////////////////////////
+   foreach($target_row as $key => $value)
+      $target_row[$key] = "0";
+
+//   echo "Empty Target row:<br/>\n";
+//   var_dump($target_row);
+//   echo "<br/>\n";
 
 
    //////////////////////////////////////
@@ -113,46 +182,71 @@ function block__after_view_tab_content()
                          SUM(flights.pic) AS pic,
                          SUM(flights.day + flights.night) AS total_hours
                          FROM flights 
-                         WHERE flights.pageId <= ".$pageRecord->val('id'),$app->db());
+                         WHERE flights.pageId < ".$pageRecord->val('id'),$app->db());
    if(!$pageRes)
    {
       echo "Nothing found in second SQL query...<br>";
    }
 
    $row = mysql_fetch_assoc($pageRes);
-   $row = array("pages"=>"To date") + $row;
+   //Cross Country hours
+   $pageRes = mysql_query("SELECT SUM(flights.day + flights.night) AS cross_country
+                         FROM flights 
+                         WHERE flights.pageId < ".$pageRecord->val('id').
+			 " AND flights.crossCountry" , $app->db());
 
-//   echo "Flights through this page: ";
-//   echo $row['numflights']."<br>";
-//   var_dump($row);
-   echo "<br>";
-
+   $ccToDateRow = mysql_fetch_assoc($pageRes);
    mysql_free_result($pageRes);
 
-   $data[] = $row;
+   //Dual Hours
+   $pageRes = mysql_query("SELECT SUM(flights.day + flights.night) AS dual_hours
+                           FROM flights
+                           WHERE flights.pageId < " . $pageRecord->val('id') .
+                           " AND flights.instructorId" , $app->db());
+
+   $dualToDateRow = mysql_fetch_assoc($pageRes);
+   mysql_free_result($pageRes);
+
+   $target_row = array_merge(
+     $target_row,
+     $row,
+     array("pages"=>"To Date"),
+     $ccToDateRow,$dualToDateRow);
+
+   $data[] = $target_row;
+
+   ////////////////////////////////////
+   // End Queries, Start outputting  //
+   ////////////////////////////////////
+
+//  Dumping row and data to see structural difference
+//   var_dump($row);
+//   echo "<br>\n";
+//   var_dump($data);
+
+   echo "<br>\n";
+
+   $grid = new Dataface_RecordGrid($data);
+   echo $grid->toHTML();
+
 
 //   echo "<br>";
 //   var_dump($data);
 
-   $grid = new Dataface_RecordGrid($data);  
-   echo $grid->toHTML();
+   echo "Todo:<br>\n";
+   echo "Taildragger Landings <br>\n";
 
-   echo "Todo:<br>";
-   echo "Taildragger Landings   <br>";
+   echo "Single Engine<br>\n";
+   echo "Multi Engine<br>\n";
+   echo "High Performance<br>\n";
+   echo "Complex<br>\n";
+   echo "Taildragger<br>\n";
 
-   echo "Single Engine<br>";
-   echo "Multi Engine<br>";
-   echo "High Performance<br>";
-   echo "Complex<br>";
-   echo "Taildragger<br>";
+   echo "PIC CC<br>\n";
+   echo "Solo CC<br>\n";
 
-   echo "CC<br>";
-   echo "PIC CC<br>";
-   echo "Solo CC<br>";
-
-   echo "Ground Trainer<br>";
-   echo "Dual<br>";
-   echo "Solo<br>";
+   echo "Ground Trainer<br>\n";
+   echo "Solo<br>\n";
 }
 
 }

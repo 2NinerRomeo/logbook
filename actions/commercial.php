@@ -37,6 +37,33 @@ class actions_commercial
        //$body .= $grid->toHTML();   // Get the HTML of the RecordGrid
 
     }
+    ///////////////////////
+    //Query for total hours
+    ///////////////////////
+    $result = mysql_query("SELECT SUM(flights.day + flights.night) 
+                           AS total_hours
+                           FROM flights", 
+                            $this->app->db());
+    if(!$result)
+    {
+       $body .= "Query Error: Total Hours";
+    }
+    else
+    {
+       while($row = mysql_fetch_assoc($result))  //Fetch all rows
+       {
+          //append data to array building the table
+          $data[] = $row;
+          //$totalHours[] = array((float)$row['total_hours'],(int)0);
+          $totalHours = (float)$row['total_hours'];
+       }
+       //Frees the result after finished using it
+       mysql_free_result($result); 
+       //// Create new RecordGrid with the data, works nicely
+       //$grid = new Dataface_RecordGrid($data);  
+       //$body .= $grid->toHTML();   // Get the HTML of the RecordGrid
+
+    }
     /////////////////////
     //Query for PIC hours
     /////////////////////
@@ -72,6 +99,12 @@ class actions_commercial
     $body .= "<br/>\n";
     $body .= "<div id=\"combinedChart\" style=\"width:800px; ";
     $body .= "height:1050px;\"></div>\n";
+    $body .= "<br/>\n Commercial requirments are in FAR 61.129";
+    $body .= "<br/>\n 2hr, 100nm Dual Cross Country, Day";
+    $body .= "<br/>\n 2hr, 200nm Dual Cross Country, Night";
+    $body .= "<br/>\n 300nm (250nm straight line) Solo Cross Country";
+    $body .= "<br/>\n Solo Night Landings with tower";
+
     // Show the built-up content in a template derived from the main
     // Template
     df_display(array('body' => $body,

@@ -13,7 +13,14 @@ class actions_time_by_year
     $body = "<br /><br />";
     import( 'Dataface/RecordGrid.php');
 
-    //The Query, this works nicely and feeds the grid
+     $body .= "<br/>\n <h2>Time By Year</h2>";
+    $body .= "<br/>\n";
+    //reserve space for the pie chart
+    $body .= "<div id=\"typeBarChart\"
+                   style=\"width:600px;height:300px;\"></div>";
+    $body .= "<br />";
+
+//The Query, this works nicely and feeds the grid
     $result = mysql_query("SELECT YEAR(date) as year, 
                            COUNT(id) as flights,
                            SUM(day + night) AS hours
@@ -45,9 +52,6 @@ class actions_time_by_year
        //var_dump($dataset1);
        //var_dump(json_encode($dataset1));
 
-       //reserve space for the pie chart
-       $body .= "<div id=\"typeBarChart\"
-                      style=\"width:600px;height:300px;\"><div>";
     }
 
     // Show the built-up content in a template derived from the main Template

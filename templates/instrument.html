@@ -1,0 +1,171 @@
+{use_macro file="Dataface_Main_Template.html"}
+  {fill_slot name="main_section"}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.stack.js"></script>
+<script src="../../jsutils/createTable.js"></script>
+<script type="text/javascript">
+{literal}
+
+//Create an enumeration of sorts for an axis of the table
+var hrBar = Object.freeze({
+   "LOGGED":0,
+   "REQUIRED":1,
+   "FULFILLED":2,
+   "SURPLUS":3,
+   "DEFICIENT":4,
+   "NUMBER":5 });
+
+//Another enumeration for categories of time in this chart
+var hrType = Object.freeze({
+   "PICCC":0,
+   "INSTREQ":1,
+   "HOODIMC":2,
+   "ACTUALIMC":3,
+   "SIMULATORIMC":4,
+   "IFRINSTRUCT":5,
+   "SIXTYDAY":6,
+   "NUMBER":7 });
+
+function createArray(length) {
+    var arr = new Array(length || 0),
+        i = length;
+
+    if (arguments.length > 1) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = createArray.apply(this, args);
+    }
+
+    return arr;
+}
+
+function surplusOrDeficit(hours){
+   if(hours[hrBar.LOGGED] > hours[hrBar.REQUIRED]){
+      hours[hrBar.SURPLUS] = hours[hrBar.LOGGED]-hours[hrBar.REQUIRED];
+      hours[hrBar.DEFICIENT] = 0;
+      hours[hrBar.FULFILLED] = hours[hrBar.REQUIRED];
+   }else{
+      hours[hrBar.SURPLUS] = 0;
+      hours[hrBar.DEFICIENT] = hours[hrBar.REQUIRED]-hours[hrBar.LOGGED];
+      hours[hrBar.FULFILLED] = hours[hrBar.LOGGED];
+   }
+}
+
+$(function () {
+   //Create an array
+   hourBarData = createArray(hrType.NUMBER, hrBar.NUMBER);
+   
+   //populate logged hours
+   hourBarData[hrType.PICCC][hrBar.LOGGED] = 
+      {/literal}{$PicCC}{literal};
+   hourBarData[hrType.INSTREQ][hrBar.LOGGED] =
+      {/literal}{$InstReq}{literal};
+   hourBarData[hrType.HOODIMC][hrBar.LOGGED] =
+      {/literal}{$HoodIMC}{literal};
+   hourBarData[hrType.ACTUALIMC][hrBar.LOGGED] = 
+      {/literal}{$ActualIMC}{literal};
+   hourBarData[hrType.SIMULATORIMC][hrBar.LOGGED] =
+      {/literal}{$Simulator}{literal};
+   hourBarData[hrType.IFRINSTRUCT][hrBar.LOGGED] =
+      {/literal}{$IFRInstruct}{literal};
+   hourBarData[hrType.SIXTYDAY][hrBar.LOGGED] =
+      {/literal}{$SixtyDay}{literal};
+
+
+   //populate required hours
+   hourBarData[hrType.PICCC][hrBar.REQUIRED] = 50.0;
+   hourBarData[hrType.INSTREQ][hrBar.REQUIRED] = 40.0;
+   hourBarData[hrType.HOODIMC][hrBar.REQUIRED] = 0.0;
+   hourBarData[hrType.ACTUALIMC][hrBar.REQUIRED] = 0.0;
+   //special treatment, a maximum instead of a minimum
+   hourBarData[hrType.SIMULATORIMC][hrBar.REQUIRED] =
+     Math.min(20.0,{/literal}{$Simulator}{literal});
+   hourBarData[hrType.IFRINSTRUCT][hrBar.REQUIRED] = 15.0;
+   hourBarData[hrType.SIXTYDAY][hrBar.REQUIRED] = 3.0;
+
+   //calculate surpluses and deficits
+   for(index = 0; index < hrType.NUMBER; ++index)
+   {
+      surplusOrDeficit(hourBarData[index]);   
+   }
+
+   //diagnostic output
+   //alert(hourBarData);
+   //alert("PIC:  " + hourBarData[hrType.PIC]);
+   //alert("PIC CC:  " + hourBarData[hrType.PICCC]);
+   //alert("Dual:  " + hourBarData[hrType.CDUAL]);
+   
+   //now combine them into one chart
+   var combinedHoursBarData = [{
+      data : [
+         [ hourBarData[hrType.PICCC][hrBar.FULFILLED], 0],
+         [ hourBarData[hrType.INSTREQ][hrBar.FULFILLED], -1],
+         [ hourBarData[hrType.HOODIMC][hrBar.FULFILLED], -2],
+         [ hourBarData[hrType.ACTUALIMC][hrBar.FULFILLED], -3],
+         [ hourBarData[hrType.SIMULATORIMC][hrBar.FULFILLED], -4],
+         [ hourBarData[hrType.IFRINSTRUCT][hrBar.FULFILLED], -5],
+         [ hourBarData[hrType.SIXTYDAY][hrBar.FULFILLED], -6]
+      ],
+      label: "complete req"
+   }, {
+      data: [
+         [ hourBarData[hrType.PICCC][hrBar.SURPLUS], 0],
+         [ hourBarData[hrType.INSTREQ][hrBar.SURPLUS], -1],
+         [ hourBarData[hrType.HOODIMC][hrBar.SURPLUS], -2],
+         [ hourBarData[hrType.ACTUALIMC][hrBar.SURPLUS], -3],
+         [ hourBarData[hrType.SIMULATORIMC][hrBar.SURPLUS], -4],
+         [ hourBarData[hrType.IFRINSTRUCT][hrBar.SURPLUS], -5],
+         [ hourBarData[hrType.SIXTYDAY][hrBar.SURPLUS], -6]
+      ],
+      label: "surplus"
+   }, {
+      data: [
+         [ hourBarData[hrType.PICCC][hrBar.DEFICIENT], 0],
+         [ hourBarData[hrType.INSTREQ][hrBar.DEFICIENT], -1],
+         [ hourBarData[hrType.HOODIMC][hrBar.DEFICIENT], -2],
+         [ hourBarData[hrType.ACTUALIMC][hrBar.DEFICIENT], -3],
+         [ hourBarData[hrType.SIMULATORIMC][hrBar.DEFICIENT], -4],
+         [ hourBarData[hrType.IFRINSTRUCT][hrBar.DEFICIENT], -5],
+         [ hourBarData[hrType.SIXTYDAY][hrBar.DEFICIENT], -6]
+      ],
+      label: "deficient"
+}];
+
+   var ticks = [
+      [0,"PIC CC"],
+      [-1,"Inst. Req."],
+      [-2,"Hood"],
+      [-3,"Act. IMC"],
+      [-4,"Ground Trainer"],
+      [-5,"IFR Inst"],
+      [-6,"Last 60"]
+   ];
+
+   $.plot($("#combinedChart"),
+          combinedHoursBarData,
+          {
+           series: {
+             stack: true,
+             bars: {show:true,
+                    horizontal:true,
+                    barWidth: 0.6,
+                    align: "center"
+             }
+           },
+           yaxis: {show: true,
+                   axisLabel: "Pic Time",
+                   axisLabelUseCanvas: true,
+                   ticks: ticks
+           },
+           legend: {position: "se"}
+          });
+   createTable(hourBarData);
+
+});
+</script>
+{/literal}
+
+{$body}
+
+{/fill_slot}
+{/use_macro}  

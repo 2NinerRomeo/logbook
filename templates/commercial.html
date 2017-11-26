@@ -60,18 +60,28 @@ $(function () {
    //populate logged hours
    hourBarData[hrType.TOTAL][hrBar.LOGGED] = 
       {/literal}{$totalHours}{literal};
-   hourBarData[hrType.POWERED][hrBar.LOGGED] = 0.0;
-   hourBarData[hrType.AIRPLANES][hrBar.LOGGED] = 0.0;
+   hourBarData[hrType.POWERED][hrBar.LOGGED] =
+      {/literal}{$powered}{literal};
+   hourBarData[hrType.AIRPLANES][hrBar.LOGGED] =
+      {/literal}{$airplanes}{literal};
    hourBarData[hrType.PIC][hrBar.LOGGED] = 
       {/literal}{$picHours}{literal};
-   hourBarData[hrType.PICCC][hrBar.LOGGED] = 0.0;
-   hourBarData[hrType.CDUAL][hrBar.LOGGED] = 0.0;
-   hourBarData[hrType.CDUALINST][hrBar.LOGGED] = 0.0;
-   hourBarData[hrType.CDUALINSTSE][hrBar.LOGGED] = 0.0;
-   hourBarData[hrType.CDUALCPLX][hrBar.LOGGED] = 0.0;
-   hourBarData[hrType.CDUALTEST][hrBar.LOGGED] = 0.0;
-   hourBarData[hrType.SOLO][hrBar.LOGGED] = 0.0;
-   hourBarData[hrType.SOLONIGHT][hrBar.LOGGED] = 0.0;
+   hourBarData[hrType.PICCC][hrBar.LOGGED] =
+      {/literal}{$PicCC}{literal};
+   hourBarData[hrType.CDUAL][hrBar.LOGGED] =
+      {/literal}{$CommDual}{literal};
+   hourBarData[hrType.CDUALINST][hrBar.LOGGED] =
+      {/literal}{$DualSIMC}{literal};
+   hourBarData[hrType.CDUALINSTSE][hrBar.LOGGED] =
+      {/literal}{$DualSIMCSE}{literal};
+   hourBarData[hrType.CDUALCPLX][hrBar.LOGGED] =
+      {/literal}{$DualCplx}{literal};
+   hourBarData[hrType.CDUALTEST][hrBar.LOGGED] =
+      {/literal}{$DualExam}{literal};
+   hourBarData[hrType.SOLO][hrBar.LOGGED] =
+      {/literal}{$Solo}{literal};
+   hourBarData[hrType.SOLONIGHT][hrBar.LOGGED] =
+      {/literal}{$SoloNight}{literal};
 
 
    //populate required hours
@@ -105,7 +115,7 @@ $(function () {
       data : [
          [ hourBarData[hrType.TOTAL][hrBar.FULFILLED] , 0 ],
          [ hourBarData[hrType.POWERED][hrBar.FULFILLED], -1],
-	 [ hourBarData[hrType.AIRPLANES][hrBar.FULFILLED], -2],
+         [ hourBarData[hrType.AIRPLANES][hrBar.FULFILLED], -2],
          [ hourBarData[hrType.PIC][hrBar.FULFILLED], -3],
          [ hourBarData[hrType.PICCC][hrBar.FULFILLED], -4],
          [ hourBarData[hrType.CDUAL][hrBar.FULFILLED], -5],
@@ -113,7 +123,7 @@ $(function () {
          [ hourBarData[hrType.CDUALINSTSE][hrBar.FULFILLED], -7],
          [ hourBarData[hrType.CDUALCPLX][hrBar.FULFILLED], -8],
          [ hourBarData[hrType.CDUALTEST][hrBar.FULFILLED], -9],
-         [ hourBarData[hrType.SOLO][hrBar.FULFILLED] -10],
+         [ hourBarData[hrType.SOLO][hrBar.FULFILLED], -10],
          [ hourBarData[hrType.SOLONIGHT][hrBar.FULFILLED], -11]
       ],
       label: "complete req"
@@ -121,7 +131,7 @@ $(function () {
       data: [
          [ hourBarData[hrType.TOTAL][hrBar.SURPLUS], 0 ],
          [ hourBarData[hrType.POWERED][hrBar.SURPLUS], -1],
-	 [ hourBarData[hrType.AIRPLANES][hrBar.SURPLUS], -2],
+         [ hourBarData[hrType.AIRPLANES][hrBar.SURPLUS], -2],
          [ hourBarData[hrType.PIC][hrBar.SURPLUS], -3 ],
          [ hourBarData[hrType.PICCC][hrBar.SURPLUS], -4],
          [ hourBarData[hrType.CDUAL][hrBar.SURPLUS], -5],
@@ -129,7 +139,7 @@ $(function () {
          [ hourBarData[hrType.CDUALINSTSE][hrBar.SURPLUS], -7],
          [ hourBarData[hrType.CDUALCPLX][hrBar.SURPLUS], -8],
          [ hourBarData[hrType.CDUALTEST][hrBar.SURPLUS], -9],
-         [ hourBarData[hrType.SOLO][hrBar.SURPLUS] -10],
+         [ hourBarData[hrType.SOLO][hrBar.SURPLUS], -10],
          [ hourBarData[hrType.SOLONIGHT][hrBar.SURPLUS], -11]
       ],
       label: "surplus"
@@ -137,7 +147,7 @@ $(function () {
       data: [
          [ hourBarData[hrType.TOTAL][hrBar.DEFICIENT] , 0 ],
          [ hourBarData[hrType.POWERED][hrBar.DEFICIENT] , -1],
-	 [ hourBarData[hrType.AIRPLANES][hrBar.DEFICIENT], -2],
+	      [ hourBarData[hrType.AIRPLANES][hrBar.DEFICIENT], -2],
          [ hourBarData[hrType.PIC][hrBar.DEFICIENT], -3 ],
          [ hourBarData[hrType.PICCC][hrBar.DEFICIENT], -4],
          [ hourBarData[hrType.CDUAL][hrBar.DEFICIENT], -5],
@@ -181,7 +191,8 @@ $(function () {
                    axisLabel: "Pic Time",
                    axisLabelUseCanvas: true,
                    ticks: ticks
-           }
+           },
+           legend: {position: "se"}
           });
 });
 </script>

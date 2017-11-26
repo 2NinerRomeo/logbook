@@ -53,7 +53,7 @@ class actions_time_in_type
        $body .= "<td>";
        //reserve space for the pie chart
        $body .= "<div id=\"typePieChart\"
-                      style=\"width:600px;height:300px;\"><div>";
+                      style=\"width:600px;height:500px;\"><div>";
        $body .= "</td></tr></table>";
 
     }

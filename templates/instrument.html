@@ -159,7 +159,40 @@ $(function () {
            },
            legend: {position: "se"}
           });
-   createTable(hourBarData);
+
+
+
+   //spin an HTML table from the hour bar data
+   var instTable = createTable(hourBarData);
+
+
+   //Loop the rows, add a row label, and delete the fulfilled requirement column
+   //The "ticks" array, has a set of labels
+   //ticks[0][0]
+
+   //Insert a header
+   var header = instTable.createTHead();
+   var headerRow = header.insertRow(0);
+                          
+   var hdr1 = headerRow.insertCell(0);
+   hdr1.innerHTML = "<b>logged</b>";                         
+
+   var hdr2 = headerRow.insertCell(1);
+   hdr2.innerHTML = "<b>required</b>";                         
+
+   var hdr3 = headerRow.insertCell(2);
+   hdr3.innerHTML = "req. complete";                         
+
+   var hdr4 = headerRow.insertCell(3);
+   hdr4.innerHTML = "<b>surplus</b>";                         
+
+   var hdr5 = headerRow.insertCell(4);
+   hdr5.innerHTML = "<b>deficient</b>";                         
+
+                          
+   //Replace the placeholder with the completed table                          
+   var tableOut = document.getElementById("combinedTable");
+   tableOut.parentNode.replaceChild(instTable,tableOut);                       
 
 });
 </script>

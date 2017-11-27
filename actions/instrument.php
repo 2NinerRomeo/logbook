@@ -248,6 +248,8 @@ class actions_instrument
     //reserve space for the bar chart
     $body .= "<div id=\"combinedChart\" style=\"width:800px; ";
     $body .= "height:612px;\"></div>\n";
+    //reserve a space for a table
+    $body .= "<div id=\"combinedTable\"></div>\n" ;
     //Here are some extra notes
     $body .= "<br/>\n Hood, Actual and Simulator may all contribute to the Instrument experience requirement, however Simulators may only contribute 20 hours toward that requirement (for non 142 training, FAR 61.65(e)(2))";
     $body .= "<br/>\n Dual CC, 250nm Airways/ATC Routing, approaches at each airport, 3 kinds of approaches with Nav Systems";

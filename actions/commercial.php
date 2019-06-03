@@ -193,7 +193,8 @@ class actions_commercial
                            = airplanes.id
                            WHERE airplanes.retract = 1
                            AND ( flights.dual_rx IS NOT NULL
-                           OR flights.dual_rx <> 0.0)", 
+                           OR flights.dual_rx <> 0.0)
+                           AND airplanes.typedes <> 'SIM'", 
                            $this->app->db());
     if(!$result)
     {
